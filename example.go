@@ -12,17 +12,15 @@ var (
 	githubHttpClient = getGithubClient() //singleton
 )
 
-func getGithubClient() gohttp.HttpClient {
-	client := gohttp.New()
+func getGithubClient() gohttp.Client {
 
-	client.DisableTimeouts(true)
-	// client.SerMaxIdleConnections(20)
-	// client.SetConnectionTimeout(2 * time.Second)
-	// client.SetResponsetTimeout(4 * time.Millisecond)
+	client := gohttp.NewBuilder().
+		DisableTimeouts(true).
+		SerMaxIdleConnections(5).
+		Build()
 
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Authorization", "Bearer ABC-123")
-	client.SetHeaders(commonHeaders)
 
 	return client
 }
