@@ -17,7 +17,7 @@ type ClientBuilder interface {
 	SetHeaders(headers http.Header) ClientBuilder
 	SetConnectionTimeout(timeout time.Duration) ClientBuilder
 	SetResponsetTimeout(timeout time.Duration) ClientBuilder
-	SerMaxIdleConnections(i int) ClientBuilder
+	SetMaxIdleConnections(i int) ClientBuilder
 	DisableTimeouts(disable bool) ClientBuilder
 	Build() Client
 }
@@ -49,7 +49,7 @@ func (c *clientBuilder) SetResponsetTimeout(timeout time.Duration) ClientBuilder
 	return c
 }
 
-func (c *clientBuilder) SerMaxIdleConnections(i int) ClientBuilder {
+func (c *clientBuilder) SetMaxIdleConnections(i int) ClientBuilder {
 	c.maxIdleConnections = i
 	return c
 }
