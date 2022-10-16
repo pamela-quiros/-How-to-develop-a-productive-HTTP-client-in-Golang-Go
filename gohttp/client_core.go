@@ -18,23 +18,6 @@ const (
 	defaultConnectionTimeOut  = 1 * time.Second
 )
 
-func (c *httpClient) getRequestBody(contentType string, body interface{}) ([]byte, error) {
-	if body == nil {
-		return nil, nil
-	}
-
-	switch strings.ToLower(contentType) {
-	case "application/json":
-		return json.Marshal(body)
-
-	case "application/xml":
-		return xml.Marshal(body)
-
-	default:
-		return json.Marshal(body)
-	}
-}
-
 func (c *httpClient) do(method string, url string, headers http.Header, body interface{}) (*Response, error) {
 	fullHeaders := c.getRequestHeaders(headers)
 
@@ -43,10 +26,14 @@ func (c *httpClient) do(method string, url string, headers http.Header, body int
 		return nil, err
 	}
 
+	if mock := mockupServer.getMock(method, url, string(requestBody)); mock != nil {
+		return mock.GetResponse()
+	}
+
 	request, err := http.NewRequest(method, url, bytes.NewBuffer(requestBody))
 
 	if err != nil {
-		return nil, errors.New("unable to create a nre request")
+		return nil, errors.New("unable to create a new request")
 	}
 
 	request.Header = fullHeaders
@@ -68,7 +55,7 @@ func (c *httpClient) do(method string, url string, headers http.Header, body int
 		status:     response.Status,
 		statusCode: response.StatusCode,
 		headers:    response.Header,
-		body:       responseBody,
+		Body:       responseBody,
 	}
 
 	return &finalResponse, nil
@@ -135,4 +122,21 @@ func (c *httpClient) getRequestHeaders(requestHeaders http.Header) http.Header {
 		}
 	}
 	return result
+}
+
+func (c *httpClient) getRequestBody(contentType string, body interface{}) ([]byte, error) {
+	if body == nil {
+		return nil, nil
+	}
+
+	switch strings.ToLower(contentType) {
+	case "application/json":
+		return json.Marshal(body)
+
+	case "application/xml":
+		return xml.Marshal(body)
+
+	default:
+		return json.Marshal(body)
+	}
 }

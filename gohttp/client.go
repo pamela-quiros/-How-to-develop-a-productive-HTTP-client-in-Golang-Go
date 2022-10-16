@@ -6,7 +6,8 @@ import (
 )
 
 type httpClient struct {
-	builder    *clientBuilder
+	builder *clientBuilder
+
 	client     *http.Client
 	clientOnce sync.Once
 }

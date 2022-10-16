@@ -42,7 +42,7 @@ func TestGetRequestBody(t *testing.T) {
 	//Initialization
 	client := httpClient{}
 
-	t.Run("noBodyNilResponse", func(t *testing.T) {
+	t.Run("NoBodyNilResponse", func(t *testing.T) {
 		//Execution
 		body, err := client.getRequestBody("", nil)
 
