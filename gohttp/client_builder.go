@@ -5,21 +5,22 @@ import (
 	"time"
 )
 
-type clientBuilder struct {
-	headers            http.Header
-	maxIdleConnections int
-	connectionTimeout  time.Duration
-	responseTimeout    time.Duration
-	disableTimeouts    bool
-}
-
 type ClientBuilder interface {
 	SetHeaders(headers http.Header) ClientBuilder
 	SetConnectionTimeout(timeout time.Duration) ClientBuilder
 	SetResponsetTimeout(timeout time.Duration) ClientBuilder
 	SetMaxIdleConnections(i int) ClientBuilder
 	DisableTimeouts(disable bool) ClientBuilder
+
 	Build() Client
+}
+
+type clientBuilder struct {
+	headers            http.Header
+	maxIdleConnections int
+	connectionTimeout  time.Duration
+	responseTimeout    time.Duration
+	disableTimeouts    bool
 }
 
 func NewBuilder() ClientBuilder {

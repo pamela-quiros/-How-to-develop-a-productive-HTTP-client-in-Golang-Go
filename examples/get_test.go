@@ -14,7 +14,9 @@ import (
 func TestMain(m *testing.M) {
 	fmt.Println("About to start test cases for packages 'examples'")
 
+	// Tell the HTTP library to mock any further requests from here.
 	gohttp.StartMockServer()
+
 	os.Exit(m.Run())
 }
 

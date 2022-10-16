@@ -21,7 +21,7 @@ const (
 func (c *httpClient) do(method string, url string, headers http.Header, body interface{}) (*Response, error) {
 	fullHeaders := c.getRequestHeaders(headers)
 
-	requestBody, err := c.getRequestBody(fullHeaders.Get("Content-type"), body)
+	requestBody, err := c.getRequestBody(fullHeaders.Get("Content-Type"), body)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,6 @@ func (c *httpClient) getMaxIdleConnections() int {
 	if c.builder.maxIdleConnections > 0 {
 		return c.builder.maxIdleConnections
 	}
-
 	return defaultMaxIdleConnections
 }
 
