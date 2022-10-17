@@ -1,4 +1,4 @@
-package gohttp
+package core
 
 import (
 	"encoding/json"
@@ -6,22 +6,10 @@ import (
 )
 
 type Response struct {
-	status     string
-	statusCode int
-	headers    http.Header
+	Status     string
+	StatusCode int
+	Headers    http.Header
 	Body       []byte
-}
-
-func (r *Response) Status() string {
-	return r.status
-}
-
-func (r *Response) StatusCode() int {
-	return r.statusCode
-}
-
-func (r *Response) Headers() http.Header {
-	return r.headers
 }
 
 func (r *Response) Bytes() []byte {

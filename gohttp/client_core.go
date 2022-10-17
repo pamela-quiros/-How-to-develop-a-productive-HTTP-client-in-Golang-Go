@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/pamela-quiros/go-http-client/core"
+	"github.com/pamela-quiros/go-http-client/gohttp_mock"
 	"github.com/pamela-quiros/go-http-client/gomime"
 )
 
@@ -21,20 +22,12 @@ const (
 	defaultConnectionTimeOut  = 1 * time.Second
 )
 
-func (c *httpClient) do(method string, url string, headers http.Header, body interface{}) (*Response, error) {
+func (c *httpClient) do(method string, url string, headers http.Header, body interface{}) (*core.Response, error) {
 	fullHeaders := c.getRequestHeaders(headers)
-
-	for header, _ := range fullHeaders {
-		fmt.Println(fmt.Sprintf("%s : %s", header, fullHeaders.Get(header)))
-	}
 
 	requestBody, err := c.getRequestBody(fullHeaders.Get("Content-Type"), body)
 	if err != nil {
 		return nil, err
-	}
-
-	if mock := mockupServer.getMock(method, url, string(requestBody)); mock != nil {
-		return mock.GetResponse()
 	}
 
 	request, err := http.NewRequest(method, url, bytes.NewBuffer(requestBody))
@@ -45,9 +38,7 @@ func (c *httpClient) do(method string, url string, headers http.Header, body int
 
 	request.Header = fullHeaders
 
-	client := c.getHttpClient()
-
-	response, err := client.Do(request)
+	response, err := c.getHttpClient().Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -58,17 +49,20 @@ func (c *httpClient) do(method string, url string, headers http.Header, body int
 		return nil, err
 	}
 
-	finalResponse := Response{
-		status:     response.Status,
-		statusCode: response.StatusCode,
-		headers:    response.Header,
+	finalResponse := core.Response{
+		Status:     response.Status,
+		StatusCode: response.StatusCode,
+		Headers:    response.Header,
 		Body:       responseBody,
 	}
 
 	return &finalResponse, nil
 }
 
-func (c *httpClient) getHttpClient() *http.Client {
+func (c *httpClient) getHttpClient() core.HttpClient {
+	if gohttp_mock.MockupServer.IsEnabled() {
+		return gohttp_mock.MockupServer.GetMockedClient()
+	}
 	c.clientOnce.Do(func() {
 		if c.builder.client != nil {
 			c.client = c.builder.client
