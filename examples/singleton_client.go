@@ -3,7 +3,7 @@ package examples
 import (
 	"time"
 
-	"github.com/pamela-quiros/g-http-client/gohttp"
+	"github.com/pamela-quiros/go-http-client/gohttp"
 )
 
 var (

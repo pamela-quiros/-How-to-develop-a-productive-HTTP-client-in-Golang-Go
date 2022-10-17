@@ -1,3 +1,3 @@
-module github.com/pamela-quiros/g-http-client
+module github.com/pamela-quiros/go-http-client
 
 go 1.19
