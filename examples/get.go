@@ -17,7 +17,7 @@ type Endpoints struct {
 func GetEndpoints() (*Endpoints, error) {
 	response, err := httpClient.Get("https://api.github.com")
 	if err != nil {
-		//Deal with the error as you need:
+		// Deal with the error as you need:
 		return nil, err
 	}
 
@@ -27,11 +27,10 @@ func GetEndpoints() (*Endpoints, error) {
 
 	var endpoints Endpoints
 	if err := response.UnmarshalJson(&endpoints); err != nil {
-		//Deal with the unmaeshal error as you need:
+		// Deal with the unmarshal error as you need:
 		return nil, err
 	}
 
-	fmt.Println(fmt.Sprintf("Repositories URL: %s", endpoints.RepositoryUrl))
-
+	fmt.Println(fmt.Sprintf("Repository URL: %s", endpoints.RepositoryUrl))
 	return &endpoints, nil
 }

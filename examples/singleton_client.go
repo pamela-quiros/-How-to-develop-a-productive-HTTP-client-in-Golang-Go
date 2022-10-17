@@ -18,11 +18,10 @@ func getHttpClient() gohttp.Client {
 
 	client := gohttp.NewBuilder().
 		SetHeaders(headers).
-		SetHttpClient(nil).
+		//SetHttpClient(nil).
 		SetConnectionTimeout(2 * time.Second).
 		SetResponsetTimeout(3 * time.Second).
-		SetUserAgent("Pams").
+		SetUserAgent("Pam's").
 		Build()
-
 	return client
 }
