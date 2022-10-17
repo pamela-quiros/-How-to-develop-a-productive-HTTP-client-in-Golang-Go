@@ -5,11 +5,14 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/pamela-quiros/go-http-client/gomime"
 )
 
 const (
@@ -20,6 +23,10 @@ const (
 
 func (c *httpClient) do(method string, url string, headers http.Header, body interface{}) (*Response, error) {
 	fullHeaders := c.getRequestHeaders(headers)
+
+	for header, _ := range fullHeaders {
+		fmt.Println(fmt.Sprintf("%s : %s", header, fullHeaders.Get(header)))
+	}
 
 	requestBody, err := c.getRequestBody(fullHeaders.Get("Content-Type"), body)
 	if err != nil {
@@ -63,6 +70,10 @@ func (c *httpClient) do(method string, url string, headers http.Header, body int
 
 func (c *httpClient) getHttpClient() *http.Client {
 	c.clientOnce.Do(func() {
+		if c.builder.client != nil {
+			c.client = c.builder.client
+			return
+		}
 		c.client = &http.Client{
 			Timeout: c.getConnectionTimeout() + c.getResponseTimeout(),
 			Transport: &http.Transport{
@@ -105,34 +116,16 @@ func (c *httpClient) getConnectionTimeout() time.Duration {
 	return defaultConnectionTimeOut
 }
 
-func (c *httpClient) getRequestHeaders(requestHeaders http.Header) http.Header {
-	result := make(http.Header)
-	//Add common header to the request
-	for header, value := range c.builder.headers {
-		if len(value) > 0 {
-			result.Set(header, value[0])
-		}
-	}
-
-	//Add custom header to the request
-	for header, value := range requestHeaders {
-		if len(value) > 0 {
-			result.Set(header, value[0])
-		}
-	}
-	return result
-}
-
 func (c *httpClient) getRequestBody(contentType string, body interface{}) ([]byte, error) {
 	if body == nil {
 		return nil, nil
 	}
 
 	switch strings.ToLower(contentType) {
-	case "application/json":
+	case gomime.ContentTypeJson:
 		return json.Marshal(body)
 
-	case "application/xml":
+	case gomime.ContentTypeXml:
 		return xml.Marshal(body)
 
 	default:
